@@ -1,84 +1,36 @@
-import React, {useEffect, useState} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  Image,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import React from 'react';
 
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+
+import ArtworksList from './src/screens/ArtworksList';
+import FavoritesList from './src/screens/FavoritesList';
+import ArtworkDetail from './src/screens/ArtworkDetail';
+
+const Stack = createNativeStackNavigator();
 
 function App(): React.JSX.Element {
-  const [artThumbnails, setArtThumbnails] = useState([]);
-
-  useEffect(() => {
-    fetch('https://api.artic.edu/api/v1/artworks')
-      .then(response => response.json())
-      .then(responseJson => {
-        setArtThumbnails(responseJson.data);
-      });
-  }, []);
-
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  const getArtThumbnails = () =>
-    artThumbnails.map(artThumbnail => (
-      <View key={artThumbnail.id} style={styles.artThumbnailContainer}>
-        <Image
-          source={{uri: artThumbnail.thumbnail.lqip}}
-          style={styles.previewImage}
-        />
-        <Text>{artThumbnail.title}</Text>
-      </View>
-    ));
-
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Text style={styles.title}>Art Institute Chicago App</Text>
-          <View style={styles.body}>{getArtThumbnails()}</View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="ArtworkList"
+          component={ArtworksList}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Favorites"
+          component={FavoritesList}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="ArtworkDetail"
+          component={ArtworkDetail}
+          options={{headerShown: false}}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  title: {
-    color: 'black',
-    fontSize: 25,
-    alignSelf: 'center',
-  },
-  body: {
-    justifyCenter: 'center',
-    alignItems: 'center',
-  },
-  previewImage: {
-    height: 50,
-    width: 50,
-  },
-  artThumbnailContainer: {
-    alignItems: 'center',
-    margin: 10,
-  },
-});
 
 export default App;
