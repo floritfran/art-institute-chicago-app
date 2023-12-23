@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {ScrollView, StyleSheet, Button, Text, View} from 'react-native';
 import ArtworkThumbnail from '../components/ArtworkThumbnail';
+import {Artwork} from '../types/Artwork';
 
 const ArtworksList = ({navigation}) => {
-  const [artThumbnails, setArtThumbnails] = useState([]);
+  const [artThumbnails, setArtThumbnails]: [Artwork[], Function] = useState([]);
 
   useEffect(() => {
     fetch('https://api.artic.edu/api/v1/artworks')
@@ -15,7 +16,11 @@ const ArtworksList = ({navigation}) => {
 
   const getArtThumbnails = () =>
     artThumbnails.map(artThumbnail => (
-      <ArtworkThumbnail artThumbnail={artThumbnail} navigation={navigation} />
+      <ArtworkThumbnail
+        key={artThumbnail.id}
+        artThumbnail={artThumbnail}
+        navigation={navigation}
+      />
     ));
 
   return (
