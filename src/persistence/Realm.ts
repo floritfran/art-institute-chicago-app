@@ -6,6 +6,7 @@ class RealmDB {
   constructor() {
     this.schemas = {};
     this.subscribers = {};
+    this.subscribeSchemasChanges();
     this.openRealmDatabase();
     this.loaded = false;
   }
@@ -97,6 +98,26 @@ class RealmDB {
 
       return {} as Realm.Results<T & Realm.Object>;
     }
+  }
+
+  runSuscribersByActionCallBacks(schema: string, params: any) {
+    this.subscribers[schema].forEach((func: any) => {
+      func(params);
+    });
+  }
+
+  subscribeSchemasChanges() {
+    for (let value in this.schemas) {
+      this.subscribers[value] = [];
+      const schema = this.findAll(value);
+      schema.addListener((objects, changes) =>
+        this.runSuscribersByActionCallBacks(value, objects),
+      );
+    }
+  }
+
+  subscribeToSchemaChanges(schema: string, callback: Function) {
+    this.subscribers[schema].push(callback);
   }
 }
 

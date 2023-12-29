@@ -51,11 +51,15 @@ const ArtworkThumbnail = ({
         color={'red'}
         onPress={toggleFavorite}
       />
-      <Image
-        source={{uri: artThumbnail.thumbnail.lqip}}
-        style={styles.previewImage}
-        onTouchEnd={() => navigation.navigate('ArtworkDetail', artThumbnail)}
-      />
+      {artThumbnail.thumbnail ? (
+        <Image
+          source={{uri: artThumbnail.thumbnail.lqip}}
+          style={styles.previewImage}
+          onTouchEnd={() => navigation.navigate('ArtworkDetail', artThumbnail)}
+        />
+      ) : (
+        <Icon name={'image'} size={25} style={styles.imageIcon} />
+      )}
       <Text>{artThumbnail.title}</Text>
     </View>
   );
@@ -65,6 +69,9 @@ const styles = StyleSheet.create({
   previewImage: {
     height: 50,
     width: 50,
+  },
+  imageIcon: {
+    margin: 20,
   },
   artThumbnailContainer: {
     alignItems: 'center',

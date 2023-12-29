@@ -1,20 +1,34 @@
-import React from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {ScrollView, StyleSheet, View} from 'react-native';
+import Realm from '../persistence/Realm';
+import ArtworkThumbnail from '../components/ArtworkThumbnail';
+import {Artwork} from '../types/Artwork';
 
-const FavoritesList = () => {
+const FavoritesList = ({navigation}) => {
+  const [favorites, setFavorites] = useState(Realm.findAll('FavoriteArtworks'));
+
+  useEffect(() => {
+    Realm.subscribeToSchemaChanges('FavoriteArtworks', (fav: Artwork) =>
+      setFavorites(fav),
+    );
+  }, []);
+
+  const getFavoriteArtworkThumbnails = () =>
+    favorites.map((artThumbnail: Artwork) => (
+      <ArtworkThumbnail artThumbnail={artThumbnail} navigation={navigation} />
+    ));
+
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
-      <View>
-        <Text style={styles.container}>aaaaa</Text>
-      </View>
+      <View style={styles.body}>{getFavoriteArtworkThumbnails()}</View>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'red',
-    heigth: '80%',
+  body: {
+    justifyCenter: 'center',
+    alignItems: 'center',
   },
 });
 
